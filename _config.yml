@@ -29,10 +29,13 @@ plugins:
   - jekyll-relative-links
   - jekyll-remote-theme
  
- aux_links:
+aux_links:
   "Start":
     - "https://robotverseny.github.io/"
   "Discussions":
     - "https://github.com/robotverseny/robotverseny/discussions"    
+
+# Makes Aux links open in a new tab. Default is false
+aux_links_new_tab: false
  
  # https://scds.github.io/github-pages/lesson3.html
