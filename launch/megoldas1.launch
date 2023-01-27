@@ -1,0 +1,10 @@
+<launch>
+    <!--
+    PID szabalyzo https://hu.wikipedia.org/wiki/PID_szab%C3%A1lyoz%C3%B3
+    -->    
+    <node pkg="megoldas_zala23" type= "pid_error.py" name="pid_fal_kovetes" output="screen"/>
+    <!--
+    PID szabalyzo https://hu.wikipedia.org/wiki/PID_szab%C3%A1lyoz%C3%B3
+    --> 
+    <node pkg="megoldas_zala23" type= "control.py" name="szabalyzo"  output="screen"/>
+</launch>

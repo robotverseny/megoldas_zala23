@@ -1,7 +1,4 @@
----
-layout: default
-title: Home
----
+# Home
 
 # `megoldas_zala23` ROS package
 🤖 Autonóm robotverseny zalaegerszegi forduló megoldás template 2023
@@ -29,11 +26,19 @@ default password: `dongguan`
 
 ## ROS használat
 ```
-cd ~/catkin_workspace/src/
+mkdir -p ~/megoldas_ws/src
+cd ~/megoldas_ws/
+catkin init
+cd ~/megoldas_ws/src/
 git clone https://github.com/robotverseny/megoldas_zala23
-cd ~/catkin_workspace/
+cd ~/megoldas_ws/
 catkin build megoldas_zala23
+echo "source /home/wheeltec/megoldas_ws/devel/setup.bash" >> ~/.bashrc 
 source ~/.bashrc
+```
+
+```
+rosrun rqt_robot_steering rqt_robot_steering
 ```
 
 
@@ -41,6 +46,7 @@ source ~/.bashrc
 ```
 ~/wheeltec_robot/src
 ~/catkin_workspace/src
+~/megoldas_ws/src/
 ```
 
 # Launch
@@ -49,6 +55,7 @@ source ~/.bashrc
 roslaunch turn_on_wheeltec_robot turn_on_wheeltec_robot.launch
 roslaunch lsn10 lsn10.launch
 ```
+
 
 # Topic
 
