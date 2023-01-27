@@ -1,4 +1,5 @@
-# Images of Wheeltec / Roboworks
+# Images of the robot
+
 ![main](wheeltec_roboworks_ack01.png)
 ![dimensions](wheeltec_dimensions01.png)
 

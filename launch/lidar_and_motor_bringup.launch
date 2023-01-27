@@ -1,0 +1,5 @@
+<launch>
+  <node args="0.0 0.0 0.2 0.0 0.0 0.0 base_link laser 50" name="laser_tf_publisher" pkg="tf" type="static_transform_publisher"/>  
+  <include file="$(find lsn10)/launch/lsn10.launch" />
+  <include file="$(find turn_on_wheeltec_robot)/launch/turn_on_wheeltec_robot.launch" />
+</launch>

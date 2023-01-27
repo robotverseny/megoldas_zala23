@@ -1,3 +1,8 @@
+---
+layout: default
+title: Home
+---
+
 # `megoldas_zala23` ROS package
 🤖 Autonóm robotverseny zalaegerszegi forduló megoldás template 2023
 
@@ -22,9 +27,20 @@ default password: `dongguan`
 
 `source ~/.bashrc`
 
+## ROS használat
+```
+cd ~/catkin_workspace/src/
+git clone https://github.com/robotverseny/megoldas_zala23
+cd ~/catkin_workspace/
+catkin build megoldas_zala23
+source ~/.bashrc
+```
+
+
 # Workspace
 ```
 ~/wheeltec_robot/src
+~/catkin_workspace/src
 ```
 
 # Launch
@@ -50,3 +66,10 @@ sensor_msgs/LaserScan
 ```
 nmtui
 ```
+
+# Install 
+
+```
+sudo apt install mc screen
+```
+
