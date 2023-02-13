@@ -80,3 +80,10 @@ nmtui
 sudo apt install mc screen
 ```
 
+# Language
+```
+sudo dpkg-reconfigure locales
+```
+`reboot`
+
+![](etc/locales.png)
