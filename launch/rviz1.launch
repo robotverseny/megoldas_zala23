@@ -1,0 +1,5 @@
+<!-- minimal rviz config for wheeltec -->
+
+<launch>
+    <node type="rviz" name="megoldas_zala23_rviz" pkg="rviz" args="-d $(find megoldas_zala23)/etc/rviz1.rviz" />
+</launch>

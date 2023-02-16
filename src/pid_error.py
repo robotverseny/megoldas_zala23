@@ -15,11 +15,11 @@ import std_msgs
 
 KOZEPISKOLA_NEVE = "Ismeretlen kozepiskola"
 KOZEPISKOLA_AZON = "A00"
-ANGLE_RANGE = 270 # Hokuyo 10LX has 270 degrees scan
+ANGLE_RANGE = 360 # LSN10 LIDAR has 360 degrees scan
 DESIRED_DISTANCE_RIGHT = 1.0 #0.9 # meters
 DESIRED_DISTANCE_LEFT = 0.8 # 0.55
 VELOCITY = 1.00 # meters per second
-CAR_LENGTH = 0.50 # 0.5 meters
+CAR_LENGTH = 0.445 # 0.445 meters
 
 
 ## pubm = rospy.Publisher('error', PIDInput, queue_size=10)
@@ -30,11 +30,11 @@ pubst2 = rospy.Publisher('kozepiskola', std_msgs.msg.String, queue_size=10)
 
 def getRange(data, angle):
     # data: single message from topic /scan
-    # angle: between -45 to 225 degrees, where 0 degrees is directly to the right
+    # angle: between -180 to 180 degrees, where 0 degrees is TODO: (directly to the right??s)
     # Outputs length in meters to object with angle in lidar scan field of view
     if angle > 179.9:
         angle = 179.9
-    index = len(data.ranges) * (angle + 45) / ANGLE_RANGE
+    index = len(data.ranges) * (angle + 90) / ANGLE_RANGE
     dist = data.ranges[int(index)]
     if math.isinf(dist):
         return 10.0
@@ -110,6 +110,7 @@ def followCenter(data):
     swing = math.radians(60)
     alpha = math.atan((a*math.cos(swing)-b)/(a*math.sin(swing)))
     #print "Alpha right",math.degrees(alpha)
+    messageS1.data += "\nAlpha right %.1f" % (math.degrees(alpha))
     curr_dist2 = b*math.cos(alpha)
     future_dist2 = curr_dist2+CAR_LENGTH*math.sin(alpha)
 
@@ -121,7 +122,7 @@ def followCenter(data):
     pubst1.publish(messageS1)
     return error, curr_dist2 - curr_dist1
 
-def callback(data):
+def callbackLaser(data):
     global error
     global alpha
     global final_direction
@@ -134,29 +135,29 @@ def callback(data):
     #error = error_left
 
     # Does a right wall follow
-    error_right, curr_dist_right = followRight(data, DESIRED_DISTANCE_RIGHT)
-    error = error_right
+    #error_right, curr_dist_right = followRight(data, DESIRED_DISTANCE_RIGHT)
+    #error = error_right
 
     # This is code bock for center wall follow
-    #error_center, curr_dist_center = followCenter(data)
-    #error = error_center
+    error_center, curr_dist_center = followCenter(data)
+    error = error_center
 
     ## msg = PIDInput()
     ## msg.pid_error = error
     ## msg.pid_vel = VELOCITY
     ## pubm.publish(msg)
 
-    msg = PidState()
-    msg.error = error
-    msg.error_dot = VELOCITY
-    pubm.publish(msg)
+    msg_pid_state = PidState()
+    msg_pid_state.error = error
+    msg_pid_state.error_dot = VELOCITY
+    pubm.publish(msg_pid_state)
 
 
 
 if __name__ == '__main__':
     print("Laser node started")
     rospy.init_node('dist_finder',anonymous = True)
-    rospy.Subscriber("scan",LaserScan,callback)
+    rospy.Subscriber("scan",LaserScan,callbackLaser)
     rate = rospy.Rate(2) # 2hz
     while not rospy.is_shutdown():
         pubst2.publish(KOZEPISKOLA_NEVE + "(" + KOZEPISKOLA_AZON + ")")

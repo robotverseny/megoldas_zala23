@@ -70,8 +70,8 @@ def control(data):
 
 
     # print "Velocity",velocity
-    #print "Angle in Degrees",angle*180/np.pi # Just for reference
-    msg = Twist()
+    #print("Angle in Degrees %.1f" % (angle*180/np.pi)) # Just for reference
+    msg_cmd = Twist()
 
     # velocity = 1
     # # if angle > 20*np.pi/180 or angle < -20*np.pi/180:
@@ -98,9 +98,9 @@ def control(data):
     #print "Angle",angle
 
 
-    msg.linear.x = velocity
-    msg.angular.z = angle
-    pub.publish(msg)
+    msg_cmd.linear.x = velocity * 0.2 # TODO: test low speed
+    msg_cmd.angular.z = angle
+    pub.publish(msg_cmd)
 
 def listener():
     rospy.init_node('pid_controller', anonymous=True)
