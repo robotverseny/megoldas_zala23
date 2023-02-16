@@ -30,10 +30,10 @@ pubst2 = rospy.Publisher('kozepiskola', std_msgs.msg.String, queue_size=10)
 
 def getRange(data, angle):
     # data: single message from topic /scan
-    # angle: between -180 to 180 degrees, where 0 degrees is TODO: (directly to the right??s)
+    # angle: between -180 to 180 (-90 to +270) degrees, where 0 degrees is directly to the right (see explain.ipynb)
     # Outputs length in meters to object with angle in lidar scan field of view
-    if angle > 179.9:
-        angle = 179.9
+    if angle > 369.9: # max 270 deg => 270+90
+        angle = 269.9
     index = len(data.ranges) * (angle + 90) / ANGLE_RANGE
     dist = data.ranges[int(index)]
     if math.isinf(dist):
@@ -48,8 +48,8 @@ def followRight(data, desired_trajectory):
     global alpha, pubst1
     messageS1 = std_msgs.msg.String()
     messageS1.data = "Jobb oldal kovetes"
-    a = getRange(data,60)
-    b = getRange(data,0)
+    a = getRange(data,0) ## original +60 0 deg, now flipped to 0 -60 deg
+    b = getRange(data,-60)
     swing = math.radians(60)
     alpha = math.atan((a*math.cos(swing)-b)/(a*math.sin(swing)))
     messageS1.data += "\na: %.1f b: %.1f" % (a, b)
@@ -69,8 +69,8 @@ def followLeft(data, desired_trajectory):
     # desired_trajectory: desired distance to the left wall [meters]
     global alpha, pubst1
     messageS1 = std_msgs.msg.String()
-    a = getRange(data,120)
-    b = getRange(data,179.9)
+    a = getRange(data,180) ## original +120 +180 deg, now flipped to +180 +210 deg
+    b = getRange(data,210)
     swing = math.radians(60)
     #print("a","b", a, b)
     messageS1.data = "Bal oldal kovetes\na: %.1f b: %.1f" % (a, b)
@@ -96,8 +96,8 @@ def followCenter(data):
     messageS1 = std_msgs.msg.String()
     messageS1.data = "Kozepvonal kovetes"
 
-    a = getRange(data,120)
-    b = getRange(data,179.9)
+    a = getRange(data,180) ## original +120 +180 deg, now flipped to +180 +210 deg
+    b = getRange(data,210)
     swing = math.radians(60)
     #print "center distances: ", a, b
     alpha = -math.atan((a*math.cos(swing)-b)/(a*math.sin(swing)))
@@ -105,8 +105,8 @@ def followCenter(data):
     curr_dist1 = b*math.cos(alpha)
     future_dist1 = curr_dist1-CAR_LENGTH*math.sin(alpha)
 
-    a = getRange(data,60)
-    b = getRange(data,0)
+    a = getRange(data,0) ## original +60 0 deg, now flipped to 0 -60 deg
+    b = getRange(data,-60)
     swing = math.radians(60)
     alpha = math.atan((a*math.cos(swing)-b)/(a*math.sin(swing)))
     #print "Alpha right",math.degrees(alpha)
