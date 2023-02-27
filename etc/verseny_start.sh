@@ -19,3 +19,5 @@ screen -dmS lsn10 bash -c 'roslaunch lsn10 lsn10.launch'
 sleep 4
 echo "[INFO] Starting mozgas"
 screen -dmS megoldas1 bash -c 'roslaunch megoldas_zala23 megoldas1.launch'
+echo "[INFO] Starting vizu"
+screen -dmS vizu bash -c 'rosrun megoldas_zala23 path_and_steering'

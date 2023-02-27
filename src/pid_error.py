@@ -26,69 +26,43 @@ CAR_LENGTH = 0.445 # 0.445 meters
 pubm = rospy.Publisher('error', PidState, queue_size=10)
 pubst1 = rospy.Publisher('pid_data', std_msgs.msg.String, queue_size=10)
 pubst2 = rospy.Publisher('kozepiskola', std_msgs.msg.String, queue_size=10)
-
+msg_pid_state = PidState()
 
 def getRange(data, angle):
     # data: single message from topic /scan
     # angle: between -180 to 180 (-90 to +270) degrees, where 0 degrees is directly to the right (see explain.ipynb)
     # Outputs length in meters to object with angle in lidar scan field of view
-    if angle > 369.9: # max 270 deg => 270+90
+    if angle > 269.9: # max 270 deg => 270+90
         angle = 269.9
     index = len(data.ranges) * (angle + 90) / ANGLE_RANGE
     dist = data.ranges[int(index)]
     if math.isinf(dist):
-        return 10.0
+        return 0.02
     if math.isnan(dist):
-        return 4.0
+        return 10.0
     return data.ranges[int(index)]
 
-def followRight(data, desired_trajectory):
+def followSimple(data):
     # data: single message from topic /scan
     # desired_trajetory: desired distance to the right wall [meters]
-    global alpha, pubst1
+    global alpha, pubst1, msg_pid_state
+    msg_pid_state.header.frame_id = "simple"
     messageS1 = std_msgs.msg.String()
-    messageS1.data = "Jobb oldal kovetes"
-    a = getRange(data,0) ## original +60 0 deg, now flipped to 0 -60 deg
-    b = getRange(data,-60)
-    swing = math.radians(60)
-    alpha = math.atan((a*math.cos(swing)-b)/(a*math.sin(swing)))
-    messageS1.data += "\na: %.1f b: %.1f" % (a, b)
-    messageS1.data += "\nAlpha left %.1f" % (math.degrees(alpha))
-    curr_dist = b*math.cos(alpha)
-
-    future_dist = curr_dist + CAR_LENGTH * math.sin(alpha)
-    messageS1.data += "\nRight: %.2f" % (future_dist)
-    error = desired_trajectory - future_dist
-
-    messageS1.data += "\nCurrent Distance Left: %.2f" % (curr_dist)
+    messageS1.data = "Egyszeru"
+    left_d = getRange(data, 0) 
+    right_d = getRange(data, 180)
+    forward_d = getRange(data, 270)
+    messageS1.data += "\nleft_dist: %.1f\n right_dist: %.1f" % (left_d, right_d)
+    messageS1.data += "\nforward_d: %.1f" % (forward_d)
+    velocity = forward_d * 0.6
+    if velocity < 0.3:
+        velocity = 0.0
+    error = left_d - right_d
+    curr_dist = 0
     pubst1.publish(messageS1)
-    return error, curr_dist
+    return error, curr_dist, velocity
 
-def followLeft(data, desired_trajectory):
-    # data: single message from topic /scan
-    # desired_trajectory: desired distance to the left wall [meters]
-    global alpha, pubst1
-    messageS1 = std_msgs.msg.String()
-    a = getRange(data,180) ## original +120 +180 deg, now flipped to +180 +210 deg
-    b = getRange(data,210)
-    swing = math.radians(60)
-    #print("a","b", a, b)
-    messageS1.data = "Bal oldal kovetes\na: %.1f b: %.1f" % (a, b)
-    alpha = -math.atan((a*math.cos(swing)-b)/(a*math.sin(swing)))
-    #rospy.loginfo("Alpha left %.1f" % (math.degrees(alpha)))
-    #print("Alpha left",math.degrees(alpha))
-    messageS1.data += "\nAlpha left %.1f" % (math.degrees(alpha))
-    curr_dist = b*math.cos(alpha)
 
-    future_dist = curr_dist - CAR_LENGTH * math.sin(alpha)
-    #print("Left : ",future_dist)
-    messageS1.data += "\nLeft: %.2f" % (future_dist)
-    error = future_dist - desired_trajectory
-
-    #print("Current Distance Left: ", curr_dist)
-    messageS1.data += "\nCurrent Distance Left: %.2f" % (curr_dist)
-    pubst1.publish(messageS1)
-    return error, curr_dist
 
 def followCenter(data):
     # data: single message from topic /scan
@@ -102,6 +76,7 @@ def followCenter(data):
     #print "center distances: ", a, b
     alpha = -math.atan((a*math.cos(swing)-b)/(a*math.sin(swing)))
     #print "Alpha left",math.degrees(alpha)
+    messageS1.data += "\nAlpha left %.1f" % (math.degrees(alpha))
     curr_dist1 = b*math.cos(alpha)
     future_dist1 = curr_dist1-CAR_LENGTH*math.sin(alpha)
 
@@ -130,26 +105,21 @@ def callbackLaser(data):
 
     #print " "
 
-    # Does a left wall follow
-    #error_left, curr_dist_left = followLeft(data, DESIRED_DISTANCE_LEFT)
-    #error = error_left
-
-    # Does a right wall follow
-    #error_right, curr_dist_right = followRight(data, DESIRED_DISTANCE_RIGHT)
-    #error = error_right
-
+    # Does a simple follow
+    error_simple, curr_dist, velocity = followSimple(data)
+    error = error_simple
     # This is code bock for center wall follow
-    error_center, curr_dist_center = followCenter(data)
-    error = error_center
+    #error_center, curr_dist_center = followCenter(data)
+    #error = error_center
 
     ## msg = PIDInput()
     ## msg.pid_error = error
     ## msg.pid_vel = VELOCITY
     ## pubm.publish(msg)
 
-    msg_pid_state = PidState()
+    
     msg_pid_state.error = error
-    msg_pid_state.error_dot = VELOCITY
+    msg_pid_state.error_dot = velocity #VELOCITY
     pubm.publish(msg_pid_state)
 
 

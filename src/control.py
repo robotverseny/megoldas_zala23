@@ -56,41 +56,47 @@ def control(data):
         # print "Control error velocity",control_error_vel
 
         # velocity = velocity - abs(control_error_vel)/10
-        velocity = velocity + abs(control_error_vel)
+        if velocity < 0.01:
+            velocity = 0.0
+        else:
+            velocity = velocity + abs(control_error_vel)
 
 
 
     prev_error = error
-
-    if angle > 30*np.pi/180:
-        angle = 30*np.pi/180
-    if angle < -30*np.pi/180:
-        angle = -30*np.pi/180
-
-
-
-    # print "Velocity",velocity
     #print("Angle in Degrees %.1f" % (angle*180/np.pi)) # Just for reference
     msg_cmd = Twist()
 
-    # velocity = 1
-    # # if angle > 20*np.pi/180 or angle < -20*np.pi/180:
-    # # 	velocity = 0.3
+    if (data.header.frame_id == "simple"):
+        if velocity < 0:
+            velocity = 0.0
 
-    if angle >= 10*np.pi/180 or angle <= -10*np.pi/180:
-        velocity = 0.8
+        if velocity > 4.0:
+            velocity = 4.0
 
-    if angle > 20*np.pi/180 or angle < -20*np.pi/180:
-        velocity = 0.3
+    else:
+        if angle > 30*np.pi/180:
+            angle = 30*np.pi/180
+        if angle < -30*np.pi/180:
+            angle = -30*np.pi/180
 
-    if angle >= -1*np.pi/180 and angle <= 1*np.pi/180:
-        velocity = 2.0
+        # velocity = 1
+        # # if angle > 20*np.pi/180 or angle < -20*np.pi/180:
+        # # 	velocity = 0.3
+        if angle >= 10*np.pi/180 or angle <= -10*np.pi/180:
+            velocity = 0.8
 
-    if velocity < 0:
-        velocity = 1
+        if angle > 20*np.pi/180 or angle < -20*np.pi/180:
+            velocity = 0.3
 
-    if velocity > 2.5:
-        velocity = 2.5
+        if angle >= -1*np.pi/180 and angle <= 1*np.pi/180:
+            velocity = 2.0
+
+        if velocity < 0:
+            velocity = 0.0
+
+        if velocity > 2.5:
+            velocity = 2.5
 
 
 
