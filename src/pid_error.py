@@ -96,8 +96,8 @@ def followCenter(data):
     messageS1 = std_msgs.msg.String()
     messageS1.data = "Kozepvonal kovetes"
 
-    a = getRange(data,180) ## original +120 +180 deg, now flipped to +180 +210 deg
-    b = getRange(data,210)
+    a = getRange(data,0) ## original +120 +180 deg, now flipped to 0 -60 deg
+    b = getRange(data,-60)
     swing = math.radians(60)
     #print "center distances: ", a, b
     alpha = -math.atan((a*math.cos(swing)-b)/(a*math.sin(swing)))
@@ -105,8 +105,8 @@ def followCenter(data):
     curr_dist1 = b*math.cos(alpha)
     future_dist1 = curr_dist1-CAR_LENGTH*math.sin(alpha)
 
-    a = getRange(data,0) ## original +60 0 deg, now flipped to 0 -60 deg
-    b = getRange(data,-60)
+    a = getRange(data,180) ## original +60 0 deg, now flipped to +180 +210 deg
+    b = getRange(data,210)
     swing = math.radians(60)
     alpha = math.atan((a*math.cos(swing)-b)/(a*math.sin(swing)))
     #print "Alpha right",math.degrees(alpha)
@@ -161,4 +161,7 @@ if __name__ == '__main__':
     rate = rospy.Rate(2) # 2hz
     while not rospy.is_shutdown():
         pubst2.publish(KOZEPISKOLA_NEVE + "(" + KOZEPISKOLA_AZON + ")")
-        rate.sleep()
+        try:
+            rate.sleep()
+        except rospy.exceptions.ROSTimeMovedBackwardsException:
+            pass
