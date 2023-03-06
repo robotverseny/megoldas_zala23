@@ -6,11 +6,6 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
-        - /TF1/Tree1
-        - /Path1/Status1
-        - /Steer_marker1/Status1
-        - /Marker1
-        - /Marker1/Status1
       Splitter Ratio: 0.5
     Tree Height: 451
   - Class: rviz/Selection
@@ -66,8 +61,8 @@ Visualization Manager:
       Axis: Z
       Channel Name: x
       Class: rviz/LaserScan
-      Color: 255; 255; 255
-      Color Transformer: Intensity
+      Color: 255; 197; 49
+      Color Transformer: FlatColor
       Decay Time: 0
       Enabled: true
       Invert Rainbow: true
@@ -85,7 +80,7 @@ Visualization Manager:
       Topic: /scan
       Unreliable: false
       Use Fixed Frame: true
-      Use rainbow: true
+      Use rainbow: false
       Value: true
     - Class: rviz/TF
       Enabled: true
@@ -107,7 +102,7 @@ Visualization Manager:
         left_wheel_link:
           Value: false
         odom_combined:
-          Value: true
+          Value: false
         right_front_link:
           Value: false
         right_wheel_link:
@@ -176,6 +171,33 @@ Visualization Manager:
         text_marker: true
       Queue Size: 100
       Value: true
+    - Align Bottom: false
+      Background Alpha: 0.800000011920929
+      Background Color: 0; 0; 0
+      Class: jsk_rviz_plugin/String
+      Enabled: true
+      Foreground Alpha: 0.800000011920929
+      Foreground Color: 25; 255; 240
+      Name: String
+      Overtake Color Properties: false
+      Overtake Position Properties: true
+      Topic: /pid_data
+      Value: true
+      font: DejaVu Sans Mono
+      height: 128
+      left: 0
+      line width: 2
+      text size: 12
+      top: 0
+      width: 200
+    - Class: rviz/Marker
+      Enabled: true
+      Marker Topic: /debug_marker
+      Name: Marker
+      Namespaces:
+        {}
+      Queue Size: 100
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -203,26 +225,21 @@ Visualization Manager:
   Value: true
   Views:
     Current:
-      Class: rviz/Orbit
-      Distance: 6.01900053024292
+      Angle: -1.4549998044967651
+      Class: rviz/TopDownOrtho
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
-      Focal Point:
-        X: -0.13326285779476166
-        Y: 0.29929396510124207
-        Z: 0.07164987176656723
-      Focal Shape Fixed Size: false
-      Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.2197961807250977
+      Scale: 140.78604125976562
       Target Frame: <Fixed Frame>
-      Value: Orbit (rviz)
-      Yaw: 3.1953980922698975
+      Value: TopDownOrtho (rviz)
+      X: 1.0210461616516113
+      Y: 1.075850009918213
     Saved: ~
 Window Geometry:
   Displays:
@@ -240,5 +257,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 1330
-  X: 233
-  Y: 53
+  X: -32
+  Y: -32

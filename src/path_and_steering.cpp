@@ -19,10 +19,16 @@ bool steering_enabled;
 bool first_run = true, publish_steer_marker;
 const double map_gyor_0_x = 697237.0, map_gyor_0_y = 5285644.0;
 const double map_zala_0_x = 639770.0, map_zala_0_y = 5195040.0;
+const float max = 1.5; // max speed TODO: what is the max speed of wheeltec
 std::string marker_color;
 ros::Publisher marker_pub, path_pub, text_pub;
 nav_msgs::Path path;
 geometry_msgs::Pose actual_pose;
+
+
+float mapval(float x, float in_min, float in_max, float out_min, float out_max){
+    return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
 
 
 // Callback for /cmd_vel
@@ -63,13 +69,38 @@ void loop(){
         else if(marker_color == "b"){
             steer_marker.color.r = 0.02f; steer_marker.color.g = 0.50f; steer_marker.color.b = 0.70f;
         }
-        else{ // yellow
+        else if(marker_color == "y"){ // yellow
             steer_marker.color.r = 0.94f; steer_marker.color.g = 0.83f; steer_marker.color.b = 0.07f;
+        }
+        else{ // gradient
+            // green-blue-red gradient: https://coolors.co/gradient-maker/7fffbb-0088cc-e73666
+            float green_r = 92./255., green_g = 255./255., green_b = 236./255.;
+            float red_r = 255./255., red_g =92./255., red_b =193./255.;
+            float blue_r = 92./255., blue_g =187./255., blue_b =255./255.;
+            if(speed_cmd < 0){
+                steer_marker.color.r = green_r; steer_marker.color.g = green_g; steer_marker.color.b = green_b;
+            }
+            else if(speed_cmd > max){
+                steer_marker.color.r = red_r; steer_marker.color.g = red_g; steer_marker.color.b = red_b;
+            }
+            else if( 0 < speed_cmd < max / 2){
+                float c0 = mapval(speed_cmd, 0, max / 2, green_r, blue_r);
+                float c1 = mapval(speed_cmd, 0, max / 2, green_g, blue_g);
+                float c2 = mapval(speed_cmd, 0, max / 2, green_b, blue_b);
+                steer_marker.color.r = c0; steer_marker.color.g = c1; steer_marker.color.b = c2;
+            }
+            else{
+                float c0 = mapval(speed_cmd, max / 2, max, blue_r, red_r);
+                float c1 = mapval(speed_cmd, max / 2, max, blue_g, red_g);
+                float c2 = mapval(speed_cmd, max / 2, max, blue_b, red_b);   
+                steer_marker.color.r = c0; steer_marker.color.g = c1; steer_marker.color.b = c2;
+            }
+
         }
         steer_marker.color.a = 1.0;
         steer_marker.lifetime = ros::Duration();
         double marker_pos_x = 0.0, marker_pos_y = 0.0, theta = 0.0;
-        for (int i = 0; i < 100; i++)
+        for (int i = 0; i < 10 + int(20 * speed_cmd); i++)
         {
             marker_pos_x += 0.01 * 10 * cos(theta);
             marker_pos_y += 0.01 * 10 * sin(theta);
@@ -106,14 +137,14 @@ void loop(){
     text_marker.type = text_marker.TEXT_VIEW_FACING;
     text_marker.action = visualization_msgs::Marker::ADD;
     text_marker.pose.position.x = 0.1;
-    text_marker.pose.position.y = -0.8;
-    text_marker.pose.position.z = 0;
+    text_marker.pose.position.y = -1.2;
+    text_marker.pose.position.z = 0.5;
     text_marker.pose.orientation.x = 0.0;
     text_marker.pose.orientation.y = 0.0;
     text_marker.pose.orientation.z = 0.0;
     text_marker.pose.orientation.w = 1.0;
-    text_marker.color.r = 0.9;
-    text_marker.color.g = 1.0;
+    text_marker.color.r = 0.8;
+    text_marker.color.g = 0.9;
     text_marker.color.b = 1.0;
     text_marker.color.a = 1.0;
     text_marker.scale.z = 0.4;
@@ -134,7 +165,7 @@ int main(int argc, char **argv)
     n_private.param<std::string>("pose_topic", pose_topic, "/odom");
     n_private.param<std::string>("marker_topic", marker_topic, "/marker_steering");
     n_private.param<std::string>("path_topic", path_topic, "/marker_path");
-    n_private.param<std::string>("marker_color", marker_color, "y");
+    n_private.param<std::string>("marker_color", marker_color, "gradient");
     n_private.param<bool>("publish_steer_marker", publish_steer_marker, true);
     n_private.param<int>("path_size", path_size, 100);
     ros::Subscriber sub_cmd = n.subscribe("/cmd_vel", 1, vehicleSteeringCallback);

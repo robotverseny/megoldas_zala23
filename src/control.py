@@ -105,7 +105,7 @@ def control(data):
 
 
     msg_cmd.linear.x = velocity * 0.2 # TODO: test low speed
-    msg_cmd.angular.z = angle
+    msg_cmd.angular.z = data.error # angle
     pub.publish(msg_cmd)
 
 def listener():

@@ -49,15 +49,17 @@ def followSimple(data):
     msg_pid_state.header.frame_id = "simple"
     messageS1 = std_msgs.msg.String()
     messageS1.data = "Egyszeru"
-    left_d = getRange(data, 0) 
-    right_d = getRange(data, 180)
+    left_d = getRange(data, -30) 
+    right_d = getRange(data, 210)
     forward_d = getRange(data, 270)
     messageS1.data += "\nleft_dist: %.1f\n right_dist: %.1f" % (left_d, right_d)
     messageS1.data += "\nforward_d: %.1f" % (forward_d)
     velocity = forward_d * 0.6
     if velocity < 0.3:
         velocity = 0.0
-    error = left_d - right_d
+    error = (left_d - right_d) * 0.3
+    #error = -0.01
+    messageS1.data += "\nsteer: %.1f" % (error)
     curr_dist = 0
     pubst1.publish(messageS1)
     return error, curr_dist, velocity

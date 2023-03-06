@@ -1,0 +1,6 @@
+<launch>
+    <!--
+    PID szabalyzo https://hu.wikipedia.org/wiki/PID_szab%C3%A1lyoz%C3%B3
+    -->    
+    <node pkg="megoldas_zala23" type= "simple_pursuit.py" name="pursuit_fal_kovetes" output="screen"/>
+</launch>
