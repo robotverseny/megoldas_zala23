@@ -62,3 +62,6 @@ intensities: [0.0, 0.0, 0.0, .....]
 
 
 ```
+
+
+![](path_and_steering.gif.gif)
