@@ -105,3 +105,10 @@ sudo dpkg-reconfigure locales
 `reboot`
 
 ![](etc/locales.png)
+
+# Gif
+
+![](etc/left_right01.gif)
+![](etc/trajectory01.gif)
+
+
