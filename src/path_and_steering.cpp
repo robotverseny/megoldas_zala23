@@ -74,16 +74,18 @@ void loop(){
         }
         else{ // gradient
             // green-blue-red gradient: https://coolors.co/gradient-maker/7fffbb-0088cc-e73666
-            float green_r = 92./255., green_g = 255./255., green_b = 236./255.;
-            float red_r = 255./255., red_g =92./255., red_b =193./255.;
-            float blue_r = 92./255., blue_g =187./255., blue_b =255./255.;
+            float green_r = 127./255., green_g = 255./255., green_b = 187./255.; // #7FFFBB 127, 255, 187
+            float red_r = 231./255., red_g =54./255., red_b =102./255.; // #E73666 231, 54, 102
+            float blue_r = 0./255., blue_g =136./255., blue_b =204./255.; // #0088CC 0, 136, 204
             if(speed_cmd < 0){
                 steer_marker.color.r = green_r; steer_marker.color.g = green_g; steer_marker.color.b = green_b;
+                ROS_INFO_STREAM("Negative speed (going backwards) " << speed_cmd << " m/s");
             }
             else if(speed_cmd > max){
                 steer_marker.color.r = red_r; steer_marker.color.g = red_g; steer_marker.color.b = red_b;
+                ROS_INFO_STREAM("Higher than " << max << "m/s (max) current ref: "<< speed_cmd << " m/s");
             }
-            else if( 0 < speed_cmd < max / 2){
+            else if( 0 < speed_cmd && speed_cmd < max / 2){
                 float c0 = mapval(speed_cmd, 0, max / 2, green_r, blue_r);
                 float c1 = mapval(speed_cmd, 0, max / 2, green_g, blue_g);
                 float c2 = mapval(speed_cmd, 0, max / 2, green_b, blue_b);
@@ -100,15 +102,41 @@ void loop(){
         steer_marker.color.a = 1.0;
         steer_marker.lifetime = ros::Duration();
         double marker_pos_x = 0.0, marker_pos_y = 0.0, theta = 0.0;
-        for (int i = 0; i < 10 + int(20 * speed_cmd); i++)
-        {
-            marker_pos_x += 0.01 * 10 * cos(theta);
-            marker_pos_y += 0.01 * 10 * sin(theta);
-            theta += 0.01 * 10 / wheelbase * tan(steering_angle);
-            geometry_msgs::Point p;
-            p.x = marker_pos_x;
-            p.y = marker_pos_y;
-            steer_marker.points.push_back(p);
+        if(speed_cmd < 0){ // negative speed
+            for (int i = 0; i < 10; i++)
+            {
+                marker_pos_x += 0.01 * 10 * cos(theta);
+                marker_pos_y += 0.01 * 10 * sin(theta);
+                theta += 0.01 * 10 / wheelbase * tan(steering_angle);
+                geometry_msgs::Point p;
+                p.x = marker_pos_x;
+                p.y = marker_pos_y;
+                steer_marker.points.push_back(p);
+            }            
+            reverse(steer_marker.points.begin(), steer_marker.points.end());
+            marker_pos_x = 0.0, marker_pos_y = 0.0, theta = 0.0;
+            for (int i = 0; i < 10 + int(-20 * speed_cmd); i++)
+            {
+                marker_pos_x -= 0.01 * 10 * cos(theta);
+                marker_pos_y -= 0.01 * 10 * sin(theta);
+                theta -= 0.01 * 10 / wheelbase * tan(steering_angle);
+                geometry_msgs::Point p;
+                p.x = marker_pos_x;
+                p.y = marker_pos_y;
+                steer_marker.points.push_back(p);
+            }
+        }
+        else{
+            for (int i = 0; i < 10 + int(20 * speed_cmd); i++)
+            {
+                marker_pos_x += 0.01 * 10 * cos(theta);
+                marker_pos_y += 0.01 * 10 * sin(theta);
+                theta += 0.01 * 10 / wheelbase * tan(steering_angle);
+                geometry_msgs::Point p;
+                p.x = marker_pos_x;
+                p.y = marker_pos_y;
+                steer_marker.points.push_back(p);
+            }
         }
         marker_pub.publish(steer_marker);
         steer_marker.points.clear();
@@ -143,9 +171,16 @@ void loop(){
     text_marker.pose.orientation.y = 0.0;
     text_marker.pose.orientation.z = 0.0;
     text_marker.pose.orientation.w = 1.0;
-    text_marker.color.r = 0.8;
-    text_marker.color.g = 0.9;
-    text_marker.color.b = 1.0;
+    if(speed_cmd < 0){ // negative speed
+        text_marker.color.r = 231./255.; // #E73666 231, 54, 102
+        text_marker.color.g =  54./255.;
+        text_marker.color.b = 102./255.;        
+    }
+    else{
+        text_marker.color.r = 0.8;
+        text_marker.color.g = 0.9;
+        text_marker.color.b = 1.0;
+    }
     text_marker.color.a = 1.0;
     text_marker.scale.z = 0.4;
     text_marker.lifetime = ros::Duration();
