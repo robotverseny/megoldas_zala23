@@ -61,12 +61,6 @@ def calcPointPos(range, angle):
     y1 = range * math.sin(angle)
     return x1, y1
 
-def calcDistance():
-    return 1
-
-def calcAngle():
-    return 0
-
 def getDistance(ranges, angles):
     global marker_points
     if(len(ranges) > 50):
@@ -77,13 +71,13 @@ def getDistance(ranges, angles):
         center2_max_index = np.where(math.radians(-160) < angles)[0][0]
         tmp2 = np.arange(center2_min_index, center2_max_index, 1)
         tmp = np.concatenate((tmp1, tmp2))
-        max_x = 10.0
+        max_x = -10.0
         for t in tmp:
             point = Point()
             point.x, point.y = calcPointPos(ranges[t], angles[t])
             if not math.isinf(point.x):
-                # find min
-                if point.x < max_x:
+                # find max (flipped upside min)
+                if point.x > max_x:
                     max_x = point.x
             """
             # debug
@@ -105,8 +99,8 @@ def getDistance(ranges, angles):
 def getAngle(ranges, angles):
     global marker_points
     if(len(ranges) > 50):
-        left1_min_index = np.where(math.radians(120) < angles)[0][0]
-        left1_max_index = np.where(math.radians(150) < angles)[0][0]
+        left1_min_index = np.where(math.radians(-150) < angles)[0][0]
+        left1_max_index = np.where(math.radians(-120) < angles)[0][0]
         tmp = np.arange(left1_min_index, left1_max_index, 1)
         left_d = -10.0
         for t in tmp:
@@ -128,8 +122,8 @@ def getAngle(ranges, angles):
         """
 
 
-        right1_min_index = np.where(math.radians(-150) < angles)[0][0]
-        right1_max_index = np.where(math.radians(-120) < angles)[0][0]
+        right1_min_index = np.where(math.radians(120) < angles)[0][0]
+        right1_max_index = np.where(math.radians(150) < angles)[0][0]
         tmp = np.arange(right1_min_index, right1_max_index, 1)
         right_d = 10.0
         for t in tmp:
@@ -207,8 +201,8 @@ def followSimple(data):
     marker_points.points = []
     steering_err = (steering_err + prev_steering_err) / 2
     velocity = (velocity + prev_velocity) / 2
-    #prev_steering_err = steering_err
-    #prev_velocity = velocity
+    prev_steering_err = steering_err
+    prev_velocity = velocity
     return steering_err, velocity
 
 
@@ -219,7 +213,7 @@ def callbackLaser(data):
 
 
     msg_cmd = Twist()
-    msg_cmd.linear.x = velocity * 1.0 # TODO: test low speed
+    msg_cmd.linear.x = velocity * 0.5 # TODO: test low speed
     msg_cmd.angular.z = error_steering # angle
     pub.publish(msg_cmd)    
 
