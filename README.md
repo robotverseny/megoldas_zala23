@@ -113,6 +113,6 @@ sudo dpkg-reconfigure locales
 ![](etc/angles01.svg)
 
 
-- [További magyarázat](etc/explain.ipynb)
+- [További magyarázat](https://github.com/robotverseny/megoldas_zala23/blob/main/etc/explain.ipynb)
 - [Verseny kezdőoldal](https://robotverseny.github.io/)
 
