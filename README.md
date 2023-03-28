@@ -110,5 +110,9 @@ sudo dpkg-reconfigure locales
 
 ![](etc/left_right01.gif)
 ![](etc/trajectory01.gif)
+![](etc/angles01.svg)
 
+
+- [További magyarázat](etc/explain.ipynb)
+- [Verseny kezdőoldal](https://robotverseny.github.io/)
 
