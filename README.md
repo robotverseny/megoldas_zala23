@@ -106,7 +106,21 @@ sudo dpkg-reconfigure locales
 
 ![](etc/locales.png)
 
+# Rosbag
+```
+cd ~/rosbags
+rosbag record -a -o teszt1
+```
+```
+rsync -avzh --progress wheeltec@192.168.0.100:/home/wheeltec/rosbags/ /mnt/c/bag/wheeltec/
+rosbag info teszt1_2023-03-30-12-37-22.bag
+rosbag play teszt1_2023-03-30-12-37-22.bag
+```
+
 # Gif
+```
+roslaunch megoldas_zala23 rviz1.launch
+```
 
 ![](etc/left_right01.gif)
 ![](etc/trajectory01.gif)

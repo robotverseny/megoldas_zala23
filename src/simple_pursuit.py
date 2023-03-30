@@ -87,6 +87,10 @@ def getDistance(ranges, angles):
             """
         if math.isinf(max_x):
             max_x = -5.0
+        # within 40 cm reverse - tolatas    
+        if max_x > -0.4:
+            max_x = 0.5
+            #print("tolatas - backward motion")            
         """
         # debug
         marker_points.header.frame_id = "laser"
@@ -165,7 +169,7 @@ def followSimple(data):
     messageS1.data = "Egyszeru_pursuit"
     angles = np.arange(data.angle_min, data.angle_max, data.angle_increment)
     if (len(angles) - len(data.ranges) != 0):
-        rospy.logwarn("angles and angles lenght differ")
+        rospy.logwarn("angles and ranges lenght differ")
 
     target_distance = getDistance(data.ranges, angles)
     target_angle, left_d, right_d = getAngle(data.ranges, angles)
@@ -178,7 +182,7 @@ def followSimple(data):
 
     try:
         point_base_link_frame = tf2_geometry_msgs.do_transform_point(point_st, trans)
-        point_base_link_frame.point.x *= 0.6 # reduce
+        point_base_link_frame.point.x *= 0.9 # reduce
         # debug
         marker_points.points.append(point_base_link_frame.point)
     except:
