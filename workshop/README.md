@@ -46,11 +46,8 @@ A password will be required, the default password is `dongguan`
 
 Software packages can be downloaded to the on-board computer of the robot platform, which requires internet access.
 
-1. Ethernet: connect the Ethernet cable to the Ethernet port of the on-board computer of the robot platform.
-
-obsession
-
-2. WiFi: after issuing the `nmtui` terminal command, connect to the available WiFi network.
+- Ethernet: connect the Ethernet cable to the Ethernet port of the on-board computer of the robot platform.
+- WiFi: after issuing the `nmtui` terminal command, connect to the available WiFi network.
 ```
 nmtui
 ```
@@ -62,7 +59,8 @@ nmtui
 
 After installation, the functions of the robot platform can be accessed using ROS. The sample solution of the competition can also be deployed by ROS.
 
-1. Create a workspace and install the sample solution on the robot:
+Create a workspace and install the sample solution on the robot:
+
 ``` bash
 mkdir -p ~/workshop_ws/src
 ```
@@ -98,7 +96,8 @@ echo "source /home/wheeltec/workshop_ws/devel/setup.bash" >> ~/.bashrc
 ``` bash
 source ~/.bashrc
 ```
-2. Install `screen`
+
+Install `screen`
 ```
 sudo apt install mc screen
 ```
@@ -106,13 +105,13 @@ sudo apt install mc screen
 
 ## Start solution using screen (recommended)
 
-The script `verseny_start.sh` sets the required environmental variables, starts the ROS nodes and finally after *2 minutes* **stops** everything. Look at the code: [github.com/robotverseny/megoldas_zala23/blob/main/etc/verseny_start.sh](https://github.com/robotverseny/megoldas_zala23/blob/main/etc/verseny_start.sh) 
+The script `verseny_start.sh` sets the required environmental variables, starts the ROS nodes and finally after *2 minutes* **stops** everything. Have a look at the code: [verseny_start.sh](https://github.com/robotverseny/megoldas_zala23/blob/main/etc/verseny_start.sh) 
 
 ```
 rosrun megoldas_zala23 verseny_start.sh
 ```
 
-The `verseny_start.sh' shell script usually launches several virtual terminals, such as: `roscore`, `turn_on_wheeltec_robot`, `lsn10_lidar`, `mesolvas1.launch`. All components of the solution can be stopped with the following command:
+The `verseny_start.sh` shell script usually launches several virtual terminals, such as: `roscore`, `turn_on_wheeltec_robot`, `lsn10_lidar`, `megoldas1.launch`. All components of the solution can be stopped with the following command:
 ```
 rosrun megoldas_zala23 stop_all.sh
 ```
@@ -136,7 +135,7 @@ rostopic list
 ```
 rosrun rviz rviz
 ```
-# Illustrating how the example solution works
+# Some explanatory animations 
 ```
 roslaunch megoldas_zala23 rviz1.launch
 ```
@@ -149,10 +148,19 @@ roslaunch megoldas_zala23 rviz1.launch
 
 The solution can also be started per component, not just as a single shell script. This requires four terminal windows on the on-board computer of the robot platform and issuing the following commands per terminal:
 
-```
+``` bash
 roscore
+```
+
+``` bash
 roslaunch turn_on_wheeltec_robot turn_on_wheeltec_robot.launch
+```
+
+``` bash
 roslaunch lsn10 lsn10.launch
+```
+
+``` bash
 roslaunch megoldas_zala23 megoldas1.launch
 ```
 
@@ -184,9 +192,9 @@ sensor_msgs/LaserScan
 sudo dpkg-reconfigure locales
 ```
 
-![](etc/locales.png)
+![](../etc/locales.png)
 
-``reboot''
+**reboot**
 
 ## Rosbag management
 ```
