@@ -98,9 +98,20 @@ source ~/.bashrc
 ```
 
 Install `screen`
-```
+``` bash
 sudo apt install mc screen
 ```
+
+Install jks visualization rviz plugin: depending on ROS 1 version (**melodic** / **noetic**):
+
+``` bash
+sudo apt install ros-melodic-jsk-rviz-plugins
+```
+
+``` bash
+sudo apt install ros-noetic-jsk-rviz-plugins
+```
+
 # Usage
 
 ## Start solution using screen (recommended)
